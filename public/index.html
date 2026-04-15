@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RuangGuru — Platform Belajar Online</title>
+  <meta name="description" content="Platform belajar online terpercaya untuk SMP, SMA, dan UTBK. Akses ribuan materi, video, dan soal latihan." />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles/main.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+      <div class="nav-brand">
+        <div class="nav-logo-badge">RG</div>
+        <span class="brand-name">Ruang<span class="brand-dot">Guru</span></span>
+      </div>
+      <div class="nav-links" id="navLinks">
+        <a href="#" class="nav-link active" data-section="belajar">AmbaraBelajar</a>
+        <a href="#" class="nav-link" data-section="soal">Ambara Soal</a>
+        <a href="#" class="nav-link" data-section="video">Video</a>
+        <a href="#" class="nav-link" data-section="simulasi">Simulasi Uji</a>
+      </div>
+      <div class="nav-actions">
+        <div id="authButtons">
+          <button class="btn-masuk" onclick="showModal('login')">Masuk</button>
+          <button class="btn-daftar" onclick="showModal('daftar')">Daftar</button>
+        </div>
+        <div id="userMenu" style="display:none">
+          <div class="user-avatar" id="userAvatar" onclick="toggleUserDropdown()">U</div>
+          <div class="user-dropdown" id="userDropdown">
+            <div class="dropdown-name" id="dropdownName">Pengguna</div>
+            <div class="dropdown-email" id="dropdownEmail">email@example.com</div>
+            <hr class="dropdown-divider" />
+            <button class="dropdown-item" onclick="showProfile()">Profil Saya</button>
+            <button class="dropdown-item" onclick="showProgress()">Progress Belajar</button>
+            <hr class="dropdown-divider" />
+            <button class="dropdown-item danger" onclick="logout()">Keluar</button>
+          </div>
+        </div>
+        <button class="nav-hamburger" id="hamburger" onclick="toggleMobileMenu()">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#" class="mobile-link active">AmbaraBelajar</a>
+      <a href="#" class="mobile-link">Ambara Soal</a>
+      <a href="#" class="mobile-link">Video</a>
+      <a href="#" class="mobile-link">Simulasi Uji</a>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div id="modalOverlay" class="modal-overlay" onclick="closeModal(event)">
+      <div class="modal" onclick="event.stopPropagation()">
+        <button class="modal-close-x" onclick="closeModalDirect()">×</button>
+        <div id="modalContent"></div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Hero Section -->
+    <div class="hero">
+      <div class="hero-ornament"></div>
+      <div class="hero-ornament2"></div>
+      <div class="hero-ornament3"></div>
+      <div class="hero-dots" id="heroDots"></div>
+      <div class="hero-content">
+        <div class="hero-eyebrow">
+          <div class="hero-eyebrow-dot"></div>
+          Platform Belajar Terpercaya
+        </div>
+        <h1>Belajar Lebih <span>Cerdas</span> &amp; Menyenangkan</h1>
+        <p>Akses ribuan materi, video berkualitas, dan latihan soal terstruktur — kapan saja, di mana saja.</p>
+        <div class="search-wrap">
+          <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input type="text" id="searchInput" placeholder="Cari mata pelajaran, topik, atau soal..." />
+          <button class="search-btn" onclick="handleSearch()">Cari</button>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <div class="h-stat"><div class="h-stat-num">12.000+</div><div class="h-stat-lbl">Materi</div></div>
+        <div class="h-stat-sep"></div>
+        <div class="h-stat"><div class="h-stat-num">3.500+</div><div class="h-stat-lbl">Video</div></div>
+        <div class="h-stat-sep"></div>
+        <div class="h-stat"><div class="h-stat-num">8.000+</div><div class="h-stat-lbl">Soal Latihan</div></div>
+      </div>
+    </div>
+
+    <!-- Jenjang Bar -->
+    <div class="jenjang-bar" id="jenjangBar">
+      <div class="j-tab" onclick="setJenjang(this,'SD')">SD <span class="j-badge">6 kelas</span></div>
+      <div class="j-tab" onclick="setJenjang(this,'SMP')">SMP <span class="j-badge">3 kelas</span></div>
+      <div class="j-tab active" onclick="setJenjang(this,'SMA')">SMA <span class="j-badge">3 kelas</span></div>
+      <div class="j-tab" onclick="setJenjang(this,'UTBK')">UTBK <span class="j-badge">Intensif</span></div>
+    </div>
+
+    <!-- Dashboard Stats Row (tampil setelah login) -->
+    <div class="dash-row" id="dashRow" style="display:none">
+      <div class="dash-inner">
+        <div class="dcard">
+          <div class="dlbl">Materi Selesai</div>
+          <div class="dval" id="dMateri">0</div>
+          <div class="dtrend up" id="dMateriTrend">Mulai belajar!</div>
+        </div>
+        <div class="dcard">
+          <div class="dlbl">Streak Belajar</div>
+          <div class="dval" id="dStreak">0 <span style="font-size:14px">hari</span></div>
+          <div class="dtrend up">Tetap semangat!</div>
+        </div>
+        <div class="dcard">
+          <div class="dlbl">Soal Dijawab</div>
+          <div class="dval" id="dSoal">0</div>
+          <div class="dtrend neu" id="dAkurasi">Akurasi 0%</div>
+        </div>
+        <div class="dcard">
+          <div class="dlbl">Jam Belajar</div>
+          <div class="dval" id="dJam">0 <span style="font-size:14px">jam</span></div>
+          <div class="dtrend up">Bulan ini</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content" id="mainContent">
+      <div class="layout">
+        <div class="main-col">
+          <div class="section-head">
+            <span class="section-label">Pilih Kelas</span>
+            <div class="section-line"></div>
+          </div>
+          <div class="kelas-pills" id="kelasPills"></div>
+
+          <div class="mapel-section-title">
+            <div class="title-accent"></div>
+            <span id="mapelTitle">Mata Pelajaran · Kelas 10</span>
+          </div>
+          <div class="mapel-grid" id="mapelGrid"></div>
+        </div>
+
+        <div class="side-col">
+          <div class="tip-card" id="tipCard">
+            <div class="tip-label">✦ Tips Belajar Hari Ini</div>
+            <div class="tip-text" id="tipText">Konsistensi 30 menit setiap hari lebih efektif daripada belajar 3 jam sekaligus.</div>
+          </div>
+
+          <!-- Login prompt untuk guest -->
+          <div class="side-card login-prompt-card" id="loginPromptCard">
+            <div class="lp-icon">🎯</div>
+            <div class="lp-title">Pantau Progress Kamu!</div>
+            <div class="lp-desc">Masuk untuk melihat progress belajar dan jadwal personalmu.</div>
+            <button class="lp-btn" onclick="showModal('login')">Masuk Sekarang</button>
+          </div>
+
+          <!-- Progress Card (untuk user login) -->
+          <div class="side-card" id="progressCard" style="display:none">
+            <div class="side-ornament"></div>
+            <div class="side-ornament2"></div>
+            <div class="side-card-header">
+              <div class="side-card-icon">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3D5A8A" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </div>
+              <div class="side-card-title">Progress Belajar</div>
+            </div>
+            <div class="prog-tab-switch">
+              <button class="pts active" onclick="switchProg(this,'minggu')">Minggu ini</button>
+              <button class="pts" onclick="switchProg(this,'bulan')">Bulan ini</button>
+            </div>
+            <div id="progressBars"></div>
+            <div class="streak-section">
+              <div class="streak-label">Streak minggu ini</div>
+              <div class="streak-row" id="streakRow"></div>
+            </div>
+          </div>
+
+          <div class="side-card">
+            <div class="side-card-header">
+              <div class="side-card-icon">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3D5A8A" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <div class="side-card-title">Jadwal Belajar</div>
+            </div>
+            <div id="jadwalList">
+              <div class="sched-item">
+                <div class="sched-ico" style="background:#EEF2F9">📐</div>
+                <div><div class="sched-name">Matematika</div><div class="sched-time">Hari ini · 15.00 WIB</div></div>
+              </div>
+              <div class="sched-item">
+                <div class="sched-ico" style="background:#EAF3DE">⚡</div>
+                <div><div class="sched-name">Fisika</div><div class="sched-time">Besok · 09.00 WIB</div></div>
+              </div>
+              <div class="sched-item">
+                <div class="sched-ico" style="background:#F7F1E3">🧪</div>
+                <div><div class="sched-name">Kimia</div><div class="sched-time">Kamis · 13.00 WIB</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="nav-logo-badge" style="width:28px;height:28px;font-size:11px">RG</div>
+          <span class="brand-name" style="font-size:15px">Ruang<span class="brand-dot">Guru</span></span>
+        </div>
+        <div class="footer-links">
+          <a href="#">Tentang Kami</a>
+          <a href="#">Kebijakan Privasi</a>
+          <a href="#">Syarat &amp; Ketentuan</a>
+          <a href="mailto:admin@raungguru.id">Kontak</a>
+        </div>
+        <div class="footer-copy">© 2025 RuangGuru. Hak cipta dilindungi.</div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module" src="/firebase/init.js"></script>
+  <script type="module" src="/scripts/app.js"></script>
+</body>
+</html>

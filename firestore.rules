@@ -1,0 +1,27 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users collection — hanya user itu sendiri yang bisa baca/tulis
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Konten publik (materi, video, soal) — semua bisa baca, hanya admin yang bisa tulis
+    match /konten/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Progress belajar per user
+    match /progress/{userId}/{subjectId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Default: tolak semua
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

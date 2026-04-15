@@ -1,0 +1,17 @@
+# wrangler.toml — Cloudflare Pages config
+# Digunakan jika deploy via Wrangler CLI
+
+name = "raungguru"
+compatibility_date = "2024-01-01"
+
+[env.production]
+name = "raungguru"
+
+# Build config
+[build]
+command = ""
+cwd = ""
+watch_dir = "public"
+
+# Pages config
+pages_build_output_dir = "public"
